@@ -86,6 +86,24 @@ local function matches(config, word, source_text)
   return candidate:sub(1, #needle) == needle
 end
 
+local function build_documentation(mapping)
+  if mapping.doc and mapping.doc ~= '' then
+    return {
+      kind = 'markdown',
+      value = mapping.doc,
+    }
+  end
+
+  if mapping.target:find('\n', 1, true) then
+    return {
+      kind = 'markdown',
+      value = string.format('```text\n%s\n```', mapping.target),
+    }
+  end
+
+  return nil
+end
+
 local function build_item(config, mapping)
   local item = {
     word = mapping.target,
@@ -99,12 +117,7 @@ local function build_item(config, mapping)
     },
   }
 
-  if mapping.doc and mapping.doc ~= '' then
-    item.documentation = {
-      kind = 'markdown',
-      value = mapping.doc,
-    }
-  end
+  item.documentation = build_documentation(mapping)
 
   if config.priority then
     item.priority = config.priority
