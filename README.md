@@ -67,6 +67,7 @@ Make sure `cmp-prompt-abbr` loads **after** `nvim-cmp` so the source can registe
 | `case_sensitive` | boolean | `false` | If `false`, comparisons are case-insensitive (pattern mode lowercases both the source text and the typed word). |
 | `keyword_length` | number | `1` | Minimum length of the word under the cursor before suggestions appear. |
 | `priority` | number or `nil` | `nil` | Optional priority forwarded to the completion items to influence sorting. |
+| `label_fn` | function or `nil` | `nil` | Optional label builder used when a mapping does not set `label`; receives the mapping table and should return a string. |
 
 Example mapping entry:
 
@@ -77,6 +78,22 @@ Example mapping entry:
   label = 'eta → estimated time of arrival',
   doc = [[Short expansion frequently used in project updates.]],
 }
+```
+
+### Auto-generated labels with overrides
+
+You can keep `mappings` concise and let a global builder handle labels, while still allowing per-item overrides:
+
+```lua
+require('cmp_prompt_abbr').setup({
+  label_fn = function(item)
+    return string.format('%s → %s', item.source, item.target)
+  end,
+  mappings = {
+    { source = ';jp', target = '日本語で説明して' }, -- label auto-generated
+    { source = ';co', target = 'commitをして', label = '手動ラベル: commitをして' }, -- override
+  },
+})
 ```
 
 ## Per-source Overrides

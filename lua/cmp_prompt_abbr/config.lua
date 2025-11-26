@@ -6,6 +6,7 @@ Config.defaults = {
   case_sensitive = false,
   keyword_length = 1,
   priority = nil,
+  label_fn = nil,
 }
 
 local function deep_copy(value)
@@ -74,6 +75,10 @@ local function validate_common_fields(config)
 
   if config.priority ~= nil and type(config.priority) ~= 'number' then
     error('cmp_prompt_abbr: priority must be nil or a number')
+  end
+
+  if config.label_fn ~= nil and type(config.label_fn) ~= 'function' then
+    error('cmp_prompt_abbr: label_fn must be nil or a function')
   end
 
   validate_matching(config.matching)

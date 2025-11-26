@@ -104,10 +104,25 @@ local function build_documentation(mapping)
   return nil
 end
 
+local function resolve_label(config, mapping)
+  if mapping.label ~= nil then
+    return mapping.label
+  end
+
+  if config.label_fn then
+    local ok, value = pcall(config.label_fn, mapping)
+    if ok and type(value) == 'string' then
+      return value
+    end
+  end
+
+  return mapping.source
+end
+
 local function build_item(config, mapping)
   local item = {
     word = mapping.target,
-    label = mapping.label or mapping.source,
+    label = resolve_label(config, mapping),
     insertText = mapping.target,
     filterText = mapping.source,
     user_data = {
